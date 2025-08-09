@@ -32,8 +32,11 @@ export const AuthAPI = {
 
 // Posts
 export const PostAPI = {
-  feed: () => api.get('/posts/feed').then((r) => r.data),
-  byUser: (userId) => api.get(`/posts/user/${userId}`).then((r) => r.data),
+  feed: (params) => api.get('/posts/feed', { params }).then((r) => r.data),
+  explore: (params) => api.get('/posts/explore', { params }).then((r) => r.data),
+  bookmarks: (params) => api.get('/posts/bookmarks', { params }).then((r) => r.data),
+  toggleBookmark: (postId) => api.post(`/posts/${postId}/bookmark`).then((r) => r.data),
+  byUser: (userId, params) => api.get(`/posts/user/${userId}`, { params }).then((r) => r.data),
   create: (formData) => api.post('/posts', formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then((r) => r.data),
   like: (postId) => api.post(`/posts/${postId}/like`).then((r) => r.data),
   comment: (postId, text) => api.post(`/posts/${postId}/comment`, { text }).then((r) => r.data),

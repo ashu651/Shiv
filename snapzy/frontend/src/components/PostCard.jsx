@@ -17,6 +17,10 @@ export default function PostCard({ post, onUpdate }) {
     onUpdate(updated);
   };
 
+  const toggleBookmark = async () => {
+    await PostAPI.toggleBookmark(post._id);
+  };
+
   const liked = !!post.likes?.some?.((id) => id === user?._id);
 
   return (
@@ -33,6 +37,7 @@ export default function PostCard({ post, onUpdate }) {
       <div className="p-3 space-y-2">
         <div className="flex items-center gap-3">
           <LikeButton liked={liked} count={post.likes?.length || 0} onClick={toggleLike} />
+          <button onClick={toggleBookmark} className="px-3 py-1 rounded border">🔖</button>
         </div>
         {post.caption && <p>{post.caption}</p>}
         <div className="space-y-1">

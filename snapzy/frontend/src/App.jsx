@@ -6,6 +6,9 @@ import Register from './pages/Register.jsx';
 import Profile from './pages/Profile.jsx';
 import Upload from './pages/Upload.jsx';
 import EditProfile from './pages/EditProfile.jsx';
+import Explore from './pages/Explore.jsx';
+import Notifications from './pages/Notifications.jsx';
+import Bookmarks from './pages/Bookmarks.jsx';
 import { useAuth } from './context/AuthContext.jsx';
 
 function PrivateRoute({ children }) {
@@ -26,6 +29,9 @@ export default function App() {
           <Route path="/u/:username" element={<PrivateRoute><Profile /></PrivateRoute>} />
           <Route path="/upload" element={<PrivateRoute><Upload /></PrivateRoute>} />
           <Route path="/settings" element={<PrivateRoute><EditProfile /></PrivateRoute>} />
+          <Route path="/explore" element={<PrivateRoute><Explore /></PrivateRoute>} />
+          <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
+          <Route path="/bookmarks" element={<PrivateRoute><Bookmarks /></PrivateRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

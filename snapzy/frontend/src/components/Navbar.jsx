@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { UserAPI } from '../lib/api.js';
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { user, logout, unreadCount } = useAuth();
   const [q, setQ] = useState('');
   const [results, setResults] = useState([]);
   const navigate = useNavigate();
@@ -39,6 +39,14 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           {user ? (
             <>
+              <Link to="/explore" className="px-3 py-1 rounded border">Explore</Link>
+              <Link to="/bookmarks" className="px-3 py-1 rounded border">Bookmarks</Link>
+              <Link to="/notifications" className="relative px-3 py-1 rounded border">
+                Notifications
+                {unreadCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full px-2 py-0.5">{unreadCount}</span>
+                )}
+              </Link>
               <Link to="/upload" className="px-3 py-1 rounded bg-black text-white">Upload</Link>
               <Link to={`/u/${user.username}`} className="hover:underline">@{user.username}</Link>
               <Link to="/settings" className="px-3 py-1 rounded border">Settings</Link>

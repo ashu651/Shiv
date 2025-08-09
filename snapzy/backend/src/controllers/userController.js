@@ -1,5 +1,6 @@
 import { User } from '../models/User.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
+import { emitToUser } from '../config/io.js';
 
 export const getProfile = asyncHandler(async (req, res) => {
   const { username } = req.params;
@@ -23,6 +24,7 @@ export const follow = asyncHandler(async (req, res) => {
 
   await User.findByIdAndUpdate(req.user._id, { $addToSet: { following: target._id } });
   await User.findByIdAndUpdate(target._id, { $addToSet: { followers: req.user._id } });
+  emitToUser(target._id.toString(), 'notification', { type: 'follow', fromUserId: req.user._id.toString() });
   res.json({ success: true });
 });
 
