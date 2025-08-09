@@ -7,6 +7,7 @@ import storyRoutes from './storyRoutes.js';
 import chatRoutes from './chatRoutes.js';
 import collectionRoutes from './collectionRoutes.js';
 import pushRoutes from './pushRoutes.js';
+import moderationRoutes from './moderationRoutes.js';
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use('/stories', storyRoutes);
 router.use('/chats', chatRoutes);
 router.use('/collections', collectionRoutes);
 router.use('/push', pushRoutes);
+router.use('/moderation', moderationRoutes);
 
 export default router;

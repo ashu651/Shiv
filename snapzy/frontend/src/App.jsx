@@ -11,6 +11,7 @@ import Notifications from './pages/Notifications.jsx';
 import Bookmarks from './pages/Bookmarks.jsx';
 import Chat from './pages/Chat.jsx';
 import Collections from './pages/Collections.jsx';
+import Admin from './pages/Admin.jsx';
 import { useAuth } from './context/AuthContext.jsx';
 
 function PrivateRoute({ children }) {
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="/bookmarks" element={<PrivateRoute><Bookmarks /></PrivateRoute>} />
           <Route path="/collections" element={<PrivateRoute><Collections /></PrivateRoute>} />
           <Route path="/chat" element={<PrivateRoute><Chat /></PrivateRoute>} />
+          <Route path="/admin" element={<PrivateRoute><Admin /></PrivateRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
