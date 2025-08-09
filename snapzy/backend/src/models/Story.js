@@ -6,6 +6,7 @@ const StorySchema = new mongoose.Schema(
     mediaUrl: { type: String, required: true },
     mediaType: { type: String, enum: ['image', 'video'], default: 'image' },
     expiresAt: { type: Date, required: true },
+    viewers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   },
   { timestamps: true }
 );

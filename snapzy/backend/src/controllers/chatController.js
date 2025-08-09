@@ -11,11 +11,39 @@ export const listChats = asyncHandler(async (req, res) => {
 
 export const getOrCreateChat = asyncHandler(async (req, res) => {
   const peerId = req.params.userId;
-  let chat = await Chat.findOne({ participants: { $all: [req.user._id, peerId] } });
+  let chat = await Chat.findOne({ isGroup: false, participants: { $all: [req.user._id, peerId] } });
   if (!chat) {
     chat = await Chat.create({ participants: [req.user._id, peerId] });
   }
   chat = await chat.populate('participants', 'username avatarUrl');
+  res.json({ chat });
+});
+
+export const createGroup = asyncHandler(async (req, res) => {
+  const { name, memberIds } = req.body;
+  const participants = [req.user._id, ...(memberIds || [])];
+  const chat = await Chat.create({ isGroup: true, name: name || 'Group', participants, admins: [req.user._id] });
+  const populated = await chat.populate('participants', 'username avatarUrl');
+  res.status(201).json({ chat: populated });
+});
+
+export const addMember = asyncHandler(async (req, res) => {
+  const chatId = req.params.chatId;
+  const { userId } = req.body;
+  let chat = await Chat.findById(chatId);
+  if (!chat?.isGroup) return res.status(400).json({ message: 'Not a group' });
+  await Chat.findByIdAndUpdate(chatId, { $addToSet: { participants: userId } });
+  chat = await Chat.findById(chatId).populate('participants', 'username avatarUrl');
+  res.json({ chat });
+});
+
+export const removeMember = asyncHandler(async (req, res) => {
+  const chatId = req.params.chatId;
+  const { userId } = req.body;
+  let chat = await Chat.findById(chatId);
+  if (!chat?.isGroup) return res.status(400).json({ message: 'Not a group' });
+  await Chat.findByIdAndUpdate(chatId, { $pull: { participants: userId } });
+  chat = await Chat.findById(chatId).populate('participants', 'username avatarUrl');
   res.json({ chat });
 });
 
@@ -39,9 +67,11 @@ export const sendMessage = asyncHandler(async (req, res) => {
   if (!chat.participants.map((id) => id.toString()).includes(req.user._id.toString())) {
     return res.status(403).json({ message: 'Not a participant' });
   }
-  const peerId = chat.participants.find((id) => id.toString() !== req.user._id.toString());
-  const msg = await Message.create({ chat: chat._id, from: req.user._id, to: peerId, text, mediaUrl });
+  const msg = await Message.create({ chat: chat._id, from: req.user._id, text, mediaUrl });
   await Chat.findByIdAndUpdate(chat._id, { lastMessageAt: new Date(), lastMessage: text || '[media]' });
-  emitToUser(peerId.toString(), 'message', { chatId: chat._id.toString(), message: msg });
+  for (const uid of chat.participants) {
+    if (uid.toString() === req.user._id.toString()) continue;
+    emitToUser(uid.toString(), 'message', { chatId: chat._id.toString(), message: msg });
+  }
   res.status(201).json({ message: msg });
 });

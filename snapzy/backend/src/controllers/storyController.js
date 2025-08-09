@@ -1,5 +1,6 @@
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { Story } from '../models/Story.js';
+import mongoose from 'mongoose';
 
 export const createStory = asyncHandler(async (req, res) => {
   const { mediaUrl, mediaType } = req.body;
@@ -15,4 +16,17 @@ export const getStories = asyncHandler(async (req, res) => {
     .populate('author', 'username avatarUrl')
     .sort({ createdAt: -1 });
   res.json({ stories });
+});
+
+export const viewStory = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  await Story.updateOne({ _id: new mongoose.Types.ObjectId(id) }, { $addToSet: { viewers: req.user._id } });
+  res.json({ success: true });
+});
+
+export const listViewers = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const sto = await Story.findById(id).populate('viewers', 'username avatarUrl');
+  if (!sto) return res.status(404).json({ message: 'Not found' });
+  res.json({ viewers: sto.viewers || [] });
 });
