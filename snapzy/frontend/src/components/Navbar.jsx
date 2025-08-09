@@ -41,6 +41,7 @@ export default function Navbar() {
             <>
               <Link to="/explore" className="px-3 py-1 rounded border">Explore</Link>
               <Link to="/bookmarks" className="px-3 py-1 rounded border">Bookmarks</Link>
+              <Link to="/collections" className="px-3 py-1 rounded border">Collections</Link>
               <Link to="/notifications" className="relative px-3 py-1 rounded border">
                 Notifications
                 {unreadCount > 0 && (
