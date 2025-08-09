@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useState } from 'react';
 import { UserAPI } from '../lib/api.js';
+import { BellIcon, BookmarkIcon, ChatBubbleLeftRightIcon, Cog6ToothIcon, PhotoIcon, RocketLaunchIcon, Squares2X2Icon } from '@heroicons/react/24/outline';
 
 export default function Navbar() {
   const { user, logout, unreadCount } = useAuth();
@@ -21,46 +22,47 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="border-b sticky top-0 bg-white/80 backdrop-blur z-10">
-      <div className="max-w-5xl mx-auto px-4 h-14 flex items-center gap-3">
-        <Link to="/" className="font-bold text-xl">Snapzy</Link>
+    <nav className="sticky top-0 z-20 bg-white/70 backdrop-blur border-b">
+      <div className="max-w-5xl mx-auto px-4 h-16 flex items-center gap-4">
+        <Link to="/" className="flex items-center gap-2 text-primary-700 hover:text-primary-800">
+          <RocketLaunchIcon className="w-6 h-6" />
+          <span className="font-extrabold text-xl">Snapzy</span>
+        </Link>
         <div className="relative flex-1">
-          <input value={q} onChange={onSearch} placeholder="Search users" className="w-full border rounded px-3 py-1" />
+          <input value={q} onChange={onSearch} placeholder="Search users..." className="w-full border rounded-full px-4 py-2 bg-white/80 focus:outline-primary-500" />
           {results.length > 0 && (
-            <div className="absolute bg-white border w-full mt-1 rounded shadow">
+            <div className="absolute bg-white border w-full mt-2 rounded-xl shadow-soft overflow-hidden">
               {results.map((u) => (
-                <button key={u._id} onClick={() => { setResults([]); setQ(''); navigate(`/u/${u.username}`); }} className="block w-full text-left px-3 py-2 hover:bg-gray-50">
+                <button key={u._id} onClick={() => { setResults([]); setQ(''); navigate(`/u/${u.username}`); }} className="block w-full text-left px-4 py-2 hover:bg-primary-50">
                   @{u.username}
                 </button>
               ))}
             </div>
           )}
         </div>
-        <div className="flex items-center gap-3">
-          {user ? (
-            <>
-              <Link to="/explore" className="px-3 py-1 rounded border">Explore</Link>
-              <Link to="/bookmarks" className="px-3 py-1 rounded border">Bookmarks</Link>
-              <Link to="/collections" className="px-3 py-1 rounded border">Collections</Link>
-              <Link to="/notifications" className="relative px-3 py-1 rounded border">
-                Notifications
-                {unreadCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full px-2 py-0.5">{unreadCount}</span>
-                )}
-              </Link>
-              <Link to="/chat" className="px-3 py-1 rounded border">Chat</Link>
-              <Link to="/upload" className="px-3 py-1 rounded bg-black text-white">Upload</Link>
-              <Link to={`/u/${user.username}`} className="hover:underline">@{user.username}</Link>
-              <Link to="/settings" className="px-3 py-1 rounded border">Settings</Link>
-              <button onClick={logout} className="px-3 py-1 rounded border">Logout</button>
-            </>
-          ) : (
-            <>
-              <Link to="/login" className="px-3 py-1 rounded border">Login</Link>
-              <Link to="/register" className="px-3 py-1 rounded bg-black text-white">Register</Link>
-            </>
-          )}
-        </div>
+        {user ? (
+          <div className="flex items-center gap-2">
+            <Link to="/explore" className="px-3 py-2 rounded-full hover:bg-primary-50 text-primary-700 flex items-center gap-1"><Squares2X2Icon className="w-5 h-5" /><span className="hidden sm:inline">Explore</span></Link>
+            <Link to="/bookmarks" className="px-3 py-2 rounded-full hover:bg-primary-50 text-primary-700"><BookmarkIcon className="w-5 h-5" /></Link>
+            <Link to="/notifications" className="relative px-3 py-2 rounded-full hover:bg-primary-50 text-primary-700">
+              <BellIcon className="w-5 h-5" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] rounded-full px-1.5 py-0.5">{unreadCount}</span>
+              )}
+            </Link>
+            <Link to="/collections" className="px-3 py-2 rounded-full hover:bg-primary-50 text-primary-700"><BookmarkIcon className="w-5 h-5" /></Link>
+            <Link to="/chat" className="px-3 py-2 rounded-full hover:bg-primary-50 text-primary-700"><ChatBubbleLeftRightIcon className="w-5 h-5" /></Link>
+            <Link to="/upload" className="px-3 py-2 rounded-full bg-primary-600 text-white hover:bg-primary-700 flex items-center gap-1"><PhotoIcon className="w-5 h-5" /><span className="hidden sm:inline">Upload</span></Link>
+            <Link to={`/u/${user.username}`} className="px-3 py-2 rounded-full hover:bg-primary-50 text-primary-700">@{user.username}</Link>
+            <Link to="/settings" className="px-3 py-2 rounded-full hover:bg-primary-50 text-primary-700"><Cog6ToothIcon className="w-5 h-5" /></Link>
+            <button onClick={logout} className="px-3 py-2 rounded-full border hover:bg-gray-50">Logout</button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <Link to="/login" className="px-4 py-2 rounded-full border hover:bg-gray-50">Login</Link>
+            <Link to="/register" className="px-4 py-2 rounded-full bg-primary-600 text-white hover:bg-primary-700">Register</Link>
+          </div>
+        )}
       </div>
     </nav>
   );

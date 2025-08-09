@@ -27,12 +27,14 @@ export default function PostCard({ post, onUpdate }) {
   const media = Array.isArray(post.media) && post.media.length > 0 ? post.media : [{ url: post.imageUrl, type: 'image' }];
 
   return (
-    <div className="border rounded-md overflow-hidden bg-white">
+    <div className="rounded-xl overflow-hidden bg-white shadow-soft border">
       <div className="flex items-center gap-2 p-3">
-        <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
-          {post.author.avatarUrl && <img src={post.author.avatarUrl} className="w-full h-full object-cover" />}
+        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 p-[2px]">
+          <div className="w-full h-full rounded-full bg-white overflow-hidden">
+            {post.author.avatarUrl && <img src={post.author.avatarUrl} className="w-full h-full object-cover" />}
+          </div>
         </div>
-        <Link to={`/u/${post.author.username}`} className="font-medium">@{post.author.username}</Link>
+        <Link to={`/u/${post.author.username}`} className="font-medium hover:underline">@{post.author.username}</Link>
       </div>
       <div className="bg-black relative">
         {media[idx]?.type === 'video' ? (
@@ -42,17 +44,17 @@ export default function PostCard({ post, onUpdate }) {
         )}
         {media.length > 1 && (
           <div className="absolute bottom-2 right-2 flex gap-2">
-            <button onClick={() => setIdx((i) => (i > 0 ? i - 1 : media.length - 1))} className="px-2 py-1 bg-white/80 rounded">‹</button>
-            <button onClick={() => setIdx((i) => (i + 1) % media.length)} className="px-2 py-1 bg-white/80 rounded">›</button>
+            <button onClick={() => setIdx((i) => (i > 0 ? i - 1 : media.length - 1))} className="px-2 py-1 bg-white/80 rounded-full">‹</button>
+            <button onClick={() => setIdx((i) => (i + 1) % media.length)} className="px-2 py-1 bg-white/80 rounded-full">›</button>
           </div>
         )}
       </div>
-      <div className="p-3 space-y-2">
+      <div className="p-3 space-y-3">
         <div className="flex items-center gap-3">
           <LikeButton liked={liked} count={post.likes?.length || 0} onClick={toggleLike} />
           <button onClick={toggleBookmark} className="px-3 py-1 rounded border">🔖</button>
         </div>
-        {post.caption && <p>{post.caption}</p>}
+        {post.caption && <p className="leading-relaxed whitespace-pre-wrap">{post.caption}</p>}
         <div className="space-y-1">
           {post.comments?.slice(0, 3).map((c) => (
             <div key={c._id} className="text-sm"><span className="font-medium">@{c.user?.username}</span>: {c.text}</div>
