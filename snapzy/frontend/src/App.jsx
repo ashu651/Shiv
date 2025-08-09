@@ -9,6 +9,7 @@ import EditProfile from './pages/EditProfile.jsx';
 import Explore from './pages/Explore.jsx';
 import Notifications from './pages/Notifications.jsx';
 import Bookmarks from './pages/Bookmarks.jsx';
+import Chat from './pages/Chat.jsx';
 import { useAuth } from './context/AuthContext.jsx';
 
 function PrivateRoute({ children }) {
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="/explore" element={<PrivateRoute><Explore /></PrivateRoute>} />
           <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
           <Route path="/bookmarks" element={<PrivateRoute><Bookmarks /></PrivateRoute>} />
+          <Route path="/chat" element={<PrivateRoute><Chat /></PrivateRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

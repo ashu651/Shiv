@@ -47,6 +47,7 @@ export default function Navbar() {
                   <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full px-2 py-0.5">{unreadCount}</span>
                 )}
               </Link>
+              <Link to="/chat" className="px-3 py-1 rounded border">Chat</Link>
               <Link to="/upload" className="px-3 py-1 rounded bg-black text-white">Upload</Link>
               <Link to={`/u/${user.username}`} className="hover:underline">@{user.username}</Link>
               <Link to="/settings" className="px-3 py-1 rounded border">Settings</Link>

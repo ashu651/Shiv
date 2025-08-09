@@ -11,7 +11,7 @@ export default function Upload() {
   const onSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    if (!file) return setError('Select an image');
+    if (!file) return setError('Select media');
     try {
       const form = new FormData();
       form.append('image', file);
@@ -27,8 +27,8 @@ export default function Upload() {
     <div className="max-w-md mx-auto p-6 space-y-4">
       <h1 className="text-2xl font-bold">Create Post</h1>
       <form onSubmit={onSubmit} className="space-y-3">
-        <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} className="w-full" />
-        <input value={caption} onChange={(e) => setCaption(e.target.value)} placeholder="Caption" className="w-full border rounded px-3 py-2" />
+        <input type="file" accept="image/*,video/*" onChange={(e) => setFile(e.target.files?.[0] || null)} className="w-full" />
+        <input value={caption} onChange={(e) => setCaption(e.target.value)} placeholder="Caption (use #hashtags)" className="w-full border rounded px-3 py-2" />
         {error && <div className="text-sm text-red-600">{error}</div>}
         <button className="w-full py-2 rounded bg-black text-white">Post</button>
       </form>
