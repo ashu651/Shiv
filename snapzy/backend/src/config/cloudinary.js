@@ -10,10 +10,10 @@ export function initCloudinary() {
   });
 }
 
-export async function uploadToCloudinary(buffer, filename, folder = config.cloudinary.folder) {
+export async function uploadToCloudinary(buffer, filename, folder = config.cloudinary.folder, resourceType = 'auto') {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder, public_id: filename, resource_type: 'image' },
+      { folder, public_id: filename, resource_type: resourceType },
       (error, result) => {
         if (error) return reject(error);
         resolve(result);
@@ -21,4 +21,16 @@ export async function uploadToCloudinary(buffer, filename, folder = config.cloud
     );
     stream.end(buffer);
   });
+}
+
+export function cloudinaryThumbnailFromUrl(url, options = {}) {
+  if (!url) return '';
+  // Insert simple transformation; for images use c_fill,w_600; for videos pick first second so_1
+  if (url.includes('/image/upload/')) {
+    return url.replace('/image/upload/', '/image/upload/c_fill,w_600/');
+  }
+  if (url.includes('/video/upload/')) {
+    return url.replace('/video/upload/', '/video/upload/so_1/');
+  }
+  return url;
 }

@@ -5,7 +5,7 @@ import sharp from 'sharp';
 import { Post } from '../models/Post.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { config } from '../config/env.js';
-import { uploadToCloudinary } from '../config/cloudinary.js';
+import { uploadToCloudinary, cloudinaryThumbnailFromUrl } from '../config/cloudinary.js';
 import { emitToUser } from '../config/io.js';
 import { User } from '../models/User.js';
 
@@ -23,10 +23,9 @@ export const createPost = asyncHandler(async (req, res) => {
   let imageUrl = '';
   let thumbnailUrl = '';
   if (config.useCloudinary) {
-    const result = await uploadToCloudinary(req.file.buffer, `${req.user._id}_${Date.now()}`);
+    const result = await uploadToCloudinary(req.file.buffer, `${req.user._id}_${Date.now()}`, undefined, 'auto');
     imageUrl = result.secure_url;
-    // Cloudinary transformation for thumbnail
-    thumbnailUrl = imageUrl.replace('/image/upload/', '/image/upload/c_fill,w_600/');
+    thumbnailUrl = cloudinaryThumbnailFromUrl(imageUrl);
   } else {
     const uploadsDir = path.resolve(__dirname, '../../', config.uploadDir);
     const thumbsDir = path.join(uploadsDir, 'thumbs');
@@ -182,4 +181,28 @@ export const getBookmarks = asyncHandler(async (req, res) => {
     .populate('author', 'username avatarUrl')
     .sort({ createdAt: -1 });
   res.json({ posts, page, limit, total, hasMore: skip + posts.length < total });
+});
+
+export const trendingHashtags = asyncHandler(async (req, res) => {
+  const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const results = await Post.aggregate([
+    { $match: { createdAt: { $gte: since } } },
+    { $unwind: '$hashtags' },
+    { $group: { _id: '$hashtags', count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+    { $limit: 20 },
+  ]);
+  res.json({ tags: results.map((r) => ({ tag: r._id, count: r.count })) });
+});
+
+export const replyComment = asyncHandler(async (req, res) => {
+  const postId = req.params.postId;
+  const { text, parentId } = req.body;
+  if (!text || !parentId) return res.status(400).json({ message: 'text and parentId required' });
+  const post = await Post.findById(postId);
+  if (!post) return res.status(404).json({ message: 'Post not found' });
+  post.comments.push({ user: req.user._id, text, parent: parentId });
+  await post.save();
+  const populated = await Post.findById(postId).populate('comments.user', 'username avatarUrl').populate('author', 'username avatarUrl');
+  res.status(201).json({ post: populated });
 });

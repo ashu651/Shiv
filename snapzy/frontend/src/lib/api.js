@@ -50,4 +50,6 @@ export const UserAPI = {
   follow: (userId) => api.post(`/users/${userId}/follow`).then((r) => r.data),
   unfollow: (userId) => api.post(`/users/${userId}/unfollow`).then((r) => r.data),
   search: (q) => api.get('/users/search', { params: { q } }).then((r) => r.data),
+  suggestions: () => api.get('/users/suggestions').then((r) => r.data),
+  togglePrivacy: () => api.post('/users/privacy').then((r) => r.data),
 };

@@ -45,3 +45,22 @@ export const searchUsers = asyncHandler(async (req, res) => {
     .select('username avatarUrl bio');
   res.json({ users });
 });
+
+export const togglePrivacy = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  user.isPrivate = !user.isPrivate;
+  await user.save();
+  res.json({ isPrivate: user.isPrivate });
+});
+
+export const suggestions = asyncHandler(async (req, res) => {
+  const myFollowing = await User.findById(req.user._id).select('following').lean();
+  const suggestions = await User.aggregate([
+    { $match: { _id: { $nin: [req.user._id, ...myFollowing.following] } } },
+    { $project: { username: 1, avatarUrl: 1, followers: 1 } },
+    { $addFields: { followersCount: { $size: '$followers' } } },
+    { $sort: { followersCount: -1 } },
+    { $limit: 10 },
+  ]);
+  res.json({ users: suggestions });
+});

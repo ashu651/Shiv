@@ -11,6 +11,8 @@ const UserSchema = new mongoose.Schema(
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
+    isPrivate: { type: Boolean, default: false },
+    isVerified: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
