@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PostAPI } from '../lib/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -6,6 +7,7 @@ import CommentBox from './CommentBox.jsx';
 
 export default function PostCard({ post, onUpdate }) {
   const { user } = useAuth();
+  const [idx, setIdx] = useState(0);
 
   const toggleLike = async () => {
     const { post: updated } = await PostAPI.like(post._id);
@@ -22,6 +24,7 @@ export default function PostCard({ post, onUpdate }) {
   };
 
   const liked = !!post.likes?.some?.((id) => id === user?._id);
+  const media = Array.isArray(post.media) && post.media.length > 0 ? post.media : [{ url: post.imageUrl, type: 'image' }];
 
   return (
     <div className="border rounded-md overflow-hidden bg-white">
@@ -31,8 +34,18 @@ export default function PostCard({ post, onUpdate }) {
         </div>
         <Link to={`/u/${post.author.username}`} className="font-medium">@{post.author.username}</Link>
       </div>
-      <div className="bg-black">
-        <img src={post.imageUrl} className="w-full object-cover" alt={post.caption} />
+      <div className="bg-black relative">
+        {media[idx]?.type === 'video' ? (
+          <video controls className="w-full" src={media[idx].url} />
+        ) : (
+          <img src={media[idx].url} className="w-full object-cover" alt={post.caption} />
+        )}
+        {media.length > 1 && (
+          <div className="absolute bottom-2 right-2 flex gap-2">
+            <button onClick={() => setIdx((i) => (i > 0 ? i - 1 : media.length - 1))} className="px-2 py-1 bg-white/80 rounded">‹</button>
+            <button onClick={() => setIdx((i) => (i + 1) % media.length)} className="px-2 py-1 bg-white/80 rounded">›</button>
+          </div>
+        )}
       </div>
       <div className="p-3 space-y-2">
         <div className="flex items-center gap-3">

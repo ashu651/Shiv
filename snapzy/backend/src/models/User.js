@@ -1,6 +1,17 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+const PushSubscriptionSchema = new mongoose.Schema(
+  {
+    endpoint: String,
+    keys: {
+      p256dh: String,
+      auth: String,
+    },
+  },
+  { _id: false }
+);
+
 const UserSchema = new mongoose.Schema(
   {
     username: { type: String, required: true, unique: true, index: true, lowercase: true, trim: true },
@@ -13,6 +24,8 @@ const UserSchema = new mongoose.Schema(
     savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
     isPrivate: { type: Boolean, default: false },
     isVerified: { type: Boolean, default: false },
+    isAdmin: { type: Boolean, default: false },
+    pushSubscriptions: { type: [PushSubscriptionSchema], default: [] },
   },
   { timestamps: true }
 );

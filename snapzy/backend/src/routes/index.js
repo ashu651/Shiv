@@ -6,6 +6,7 @@ import notificationRoutes from './notificationRoutes.js';
 import storyRoutes from './storyRoutes.js';
 import chatRoutes from './chatRoutes.js';
 import collectionRoutes from './collectionRoutes.js';
+import pushRoutes from './pushRoutes.js';
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use('/notifications', notificationRoutes);
 router.use('/stories', storyRoutes);
 router.use('/chats', chatRoutes);
 router.use('/collections', collectionRoutes);
+router.use('/push', pushRoutes);
 
 export default router;

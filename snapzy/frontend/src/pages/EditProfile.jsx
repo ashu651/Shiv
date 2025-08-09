@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthAPI } from '../lib/api.js';
+import { AuthAPI, UserAPI } from '../lib/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import { enablePush } from '../lib/push.js';
 
 export default function EditProfile() {
   const { user, setUser } = useAuth();
@@ -22,6 +23,17 @@ export default function EditProfile() {
     }
   };
 
+  const togglePrivacy = async () => {
+    try {
+      const { isPrivate } = await UserAPI.togglePrivacy();
+      setUser({ ...user, isPrivate });
+    } catch {}
+  };
+
+  const enablePushNotifications = async () => {
+    try { await enablePush(); } catch {}
+  };
+
   if (!user) return null;
 
   return (
@@ -33,6 +45,10 @@ export default function EditProfile() {
         {error && <div className="text-sm text-red-600">{error}</div>}
         <button className="w-full py-2 rounded bg-black text-white">Save</button>
       </form>
+      <div className="flex gap-2">
+        <button onClick={togglePrivacy} className="px-3 py-1 rounded border">{user.isPrivate ? 'Make Public' : 'Make Private'}</button>
+        <button onClick={enablePushNotifications} className="px-3 py-1 rounded border">Enable Push</button>
+      </div>
     </div>
   );
 }
